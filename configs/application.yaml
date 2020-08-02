@@ -1,0 +1,40 @@
+glenvoy: &glenvoy
+  app:
+    name: "Glenvoy" 
+    environment: localhost
+    version: 0
+  http:
+    host: http://localhost
+    port: 8080
+  database:
+    host: "localhost"
+    port: "1443"
+    name: ""
+    username: ""
+    password: ""
+  redis:
+    host: "localhost"
+    port: "6379"
+    username: ""
+    password: ""
+    db: 0
+    dialtimeout: 5
+
+
+development:
+  <<: *glenvoy
+  app:
+    environment: "development"
+  database:
+    name: ""
+    username: ""
+    password: ""
+
+test:
+  <<: *glenvoy
+  app:
+    environment: "test"
+  database:
+    name: ""
+    username: ""
+    password: ""
