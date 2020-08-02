@@ -14,6 +14,7 @@ type Option struct {
 	App struct {
 		Name        string `yaml:"name"`
 		Environment string `yaml:"environment"`
+		Version     string `yaml:"version"`
 	} `yaml:"app"`
 	HTTP struct {
 		Host string `yaml:"host"`
