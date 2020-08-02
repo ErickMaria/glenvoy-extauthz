@@ -1,19 +1,19 @@
 glenvoy: &glenvoy
   app:
     name: "Glenvoy" 
-    environment: localhost
+    environment: local
     version: 0
   http:
-    host: http://localhost
+    host: 0.0.0.0
     port: 8080
   database:
-    host: "localhost"
+    host: "0.0.0.0"
     port: "1443"
     name: ""
     username: ""
     password: ""
   redis:
-    host: "localhost"
+    host: 0.0.0.0
     port: "6379"
     username: ""
     password: ""

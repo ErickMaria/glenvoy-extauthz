@@ -1,2 +1,2 @@
-# glenvoy-extauthz
-A Envoy authentication server implementation for Gloo Enterprise
+# glooe-envoy-extauthz
+A Envoy external authorization server implementation for Gloo Enterprise
