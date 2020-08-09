@@ -3,10 +3,10 @@ package entity
 // Domain ...
 type Domain struct {
 	Base
-	Url   string  `gorm:"COLUMN:URL;SIZE:100;UNIQUE_INDEX;NOT NULL"`
-	Group []Group `gorm:"FOREIGNKEY:ID"`
+	Url string `gorm:"SIZE:100;UNIQUE_INDEX;NOT NULL"`
+	App []App  `gorm:"FOREIGNKEY:ID"`
 }
 
 func (Domain) TableName() string {
-	return "DOMAINS"
+	return "domains"
 }
