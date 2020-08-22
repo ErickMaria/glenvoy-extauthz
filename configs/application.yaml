@@ -6,12 +6,13 @@ glenvoy: &glenvoy
   http:
     host: 0.0.0.0
     port: 8080
-  database:
-    host: "0.0.0.0"
-    port: "1443"
-    name: ""
-    username: ""
-    password: ""
+  datasource:
+    dialect: "postgres"
+    host: "localhost"
+    port: "5432"
+    database: "GENVOYAUTHZ"
+    username: "admin"
+    password: "admin"
   redis:
     host: 0.0.0.0
     port: "6379"
@@ -19,6 +20,10 @@ glenvoy: &glenvoy
     password: ""
     db: 0
     dialtimeout: 5
+  appkeys:
+    headers:
+      - x-authz-access-token
+      - x-authz-client-token
 
 
 development:

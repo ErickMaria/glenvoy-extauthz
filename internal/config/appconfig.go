@@ -20,13 +20,14 @@ type Option struct {
 		Host string `yaml:"host"`
 		Port string `yaml:"port"`
 	} `yaml:"http"`
-	Database struct {
+	Datasource struct {
+		Dialect  string `yaml:"dialect"`
 		Host     string `yaml:"host"`
 		Port     string `yaml:"port"`
 		Username string `yaml:"username"`
 		Password string `yaml:"password"`
-		Name     string `yaml:"name"`
-	} `yaml:"database"`
+		Database string `yaml:"database"`
+	} `yaml:"datasource"`
 	Redis struct {
 		Host        string `yaml:"host"`
 		Port        string `yaml:"port"`
@@ -35,6 +36,9 @@ type Option struct {
 		DB          string `yaml:"db"`
 		DialTimeout string `yaml:"dialtimeout"`
 	} `yaml:"redis"`
+	AppKeys struct {
+		Headers [2]string `yaml:"headers"`
+	} `yaml:"appkeys"`
 
 	Profile string
 	// OperatorSet map[string]bool

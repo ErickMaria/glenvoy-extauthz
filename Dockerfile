@@ -7,6 +7,7 @@ ENV GOARCH=amd64
 
 WORKDIR /opt/gauthz
 COPY . .
+
 RUN go mod download
 RUN go build -o gauthz-server -ldflags '-libgcc=none -s -w' cmd/server/main.go 
 

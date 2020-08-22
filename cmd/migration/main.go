@@ -1,16 +1,17 @@
 package main
 
 import (
+	"context"
 	"flag"
+	"github/erickmaria/glooe-envoy-extauthz/internal/config"
 	"github/erickmaria/glooe-envoy-extauthz/internal/database"
-	"github/erickmaria/glooe-envoy-extauthz/internal/pkg/config"
-	"log"
+	"github/erickmaria/glooe-envoy-extauthz/internal/pkg/logging"
 )
 
 var (
-	conn               = database.Connection{}
-	migrate            = database.Migrate{}
 	profile, migration string
+	migrate            = database.Migrate{}
+	ctx                = context.Background()
 )
 
 func init() {
@@ -21,40 +22,26 @@ func init() {
 	flag.Parse()
 
 	// Initializing applacation Profile
-	config.Init("../../../configs", "application.yaml", profile)
-
-	// Dababase Configuration
-	conn = database.Connection{
-		Dialect: config.AppConfig.Datasource.Dialect,
-		SSLMode: "disable",
-		Datasource: database.Datasource{
-			Host:     config.AppConfig.Datasource.Host,
-			Port:     config.AppConfig.Datasource.Port,
-			Database: config.AppConfig.Datasource.Database,
-			Username: config.AppConfig.Datasource.Username,
-			Password: config.AppConfig.Datasource.Password,
-		},
-	}
-
+	config.Init("../../configs", "application.yaml", profile)
+	logging.Logger(ctx).Infof("Application profile: %s", config.AppConfig.Profile)
 }
 
 func main() {
-	log.Println("Application profile:", config.AppConfig.Profile)
-
-	db := conn.Get()
+	conn := database.NewConnection()
+	db := conn.Dial(ctx)
 	defer db.Close()
 
 	db.LogMode(true)
 
 	if migration == "create" {
-		log.Println("Creating migration")
-		migrate.Create(db)
+		logging.Logger(ctx).Infow("creating migration")
+		migrate.Create(ctx, db)
 	} else if migration == "delete" {
-		log.Println("Deleting migration")
-		migrate.Delete(db)
+		logging.Logger(ctx).Infow("deleting migration")
+		migrate.Delete(ctx, db)
 	} else {
-		log.Fatalln("migration value not acceped")
+		logging.Logger(ctx).Fatalf("migration value not acceped")
 	}
 
-	log.Println("Finished")
+	logging.Logger(ctx).Infow("Finished")
 }
