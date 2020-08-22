@@ -40,9 +40,11 @@ func init() {
 
 func main() {
 	log.Println("Application profile:", config.AppConfig.Profile)
-	
+
 	db := conn.Get()
 	defer db.Close()
+
+	db.LogMode(true)
 
 	if migration == "create" {
 		log.Println("Creating migration")
