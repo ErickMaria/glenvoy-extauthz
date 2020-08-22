@@ -23,7 +23,7 @@ glenvoy: &glenvoy
   appkeys:
     headers:
       - x-authz-access-token
-      - x-authz-client-token
+      - x-authz-client-id
 
 
 development:

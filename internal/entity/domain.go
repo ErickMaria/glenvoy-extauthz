@@ -3,7 +3,7 @@ package entity
 // Domain ...
 type Domain struct {
 	Base
-	Url    string `gorm:"SIZE:100;NOT NULL"`
+	Host   string `gorm:"SIZE:100;NOT NULL"`
 	Prefix string `gorm:"SIZE:100;NOT NULL"`
 	App    []App  `gorm:"FOREIGNKEY:ID"`
 }

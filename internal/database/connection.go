@@ -20,6 +20,7 @@ type Connection struct {
 func NewConnection() Connection {
 	return Connection{
 		Dialect: config.AppConfig.Datasource.Dialect,
+		SSLMode: "disable",
 		Datasource: Datasource{
 			Host:     config.AppConfig.Datasource.Host,
 			Port:     config.AppConfig.Datasource.Port,

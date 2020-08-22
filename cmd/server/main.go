@@ -3,18 +3,19 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
+	"net"
+
+	"github/erickmaria/glooe-envoy-extauthz/internal/authz"
 	"github/erickmaria/glooe-envoy-extauthz/internal/config"
 	"github/erickmaria/glooe-envoy-extauthz/internal/database"
-	"github/erickmaria/glooe-envoy-extauthz/internal/entity"
 	"github/erickmaria/glooe-envoy-extauthz/internal/pkg/logging"
-	"github/erickmaria/glooe-envoy-extauthz/internal/types"
-	"log"
+
+	auth "github.com/envoyproxy/go-control-plane/envoy/service/auth/v2"
+	"google.golang.org/grpc"
 )
 
 var (
-	migrate = database.Migrate{}
-	ctx     = context.Background()
+	ctx = context.Background()
 )
 
 func init() {
@@ -36,54 +37,21 @@ func main() {
 	db := conn.Dial(ctx)
 	defer db.Close()
 
-	domain := entity.Domain{}
-	app := entity.App{}
-	token := entity.Token{}
+	// create a TCP server
+	addr := config.AppConfig.HTTP.Host + ":" + config.AppConfig.HTTP.Port
+	lis, err := net.Listen("tcp", addr)
+	if err != nil {
+		logging.Logger(ctx).Fatalf("failed to listen: %v", err)
+	}
+	logging.Logger(ctx).Infof("listening on %s", lis.Addr())
+	grpcServer := grpc.NewServer()
 
-	db.Find(&domain, entity.Domain{Url: "domain1.test.com"})
-	if domain.Url == "" {
-		log.Printf("Domain %s not exist on database\n", domain.Name)
-		return
+	implAuthServer := &authz.ImplAuthorizationServer{
+		DB: db,
 	}
+	auth.RegisterAuthorizationServer(grpcServer, implAuthServer)
 
-	db.Find(&app, entity.App{Code: "apptest1", DomainID: domain.ID})
-	if app.Code == "" {
-		log.Printf("Not Fould Code on App with Domain %s\n", domain.Name)
-		return
+	if err := grpcServer.Serve(lis); err != nil {
+		logging.Logger(ctx).Fatalf("failed to start server: %v", err)
 	}
-	if app.Status == types.REVOKED || app.Status == types.DEACTIVATE {
-		log.Printf("App %s on database\n", app.Status)
-		return
-	}
-
-	db.Find(&token, entity.Token{Code: "tokentest4", AppID: app.ID})
-	if token.Code == "" {
-		log.Printf("Not Fould Code on Token with App %s\n", app.Name)
-		return
-	}
-	if token.Status == types.REVOKED || token.Status == types.DEACTIVATE {
-		log.Printf("Token %s on database\n", token.Status)
-		return
-	}
-
-	fmt.Println("result: ", token.Code)
 }
-
-// func main() {
-// 	// create a TCP
-// 	addr := config.AppConfig.HTTP.Host + ":" + config.AppConfig.HTTP.Port
-// 	lis, err := net.Listen("tcp", addr)
-// 	if err != nil {
-// 		log.Fatalf("failed to listen: %v", err)
-// 	}
-// 	log.Printf("listening on %s", lis.Addr())
-
-// 	grpcServer := grpc.NewServer()
-
-// 	implAuthServer := &authz.ImplAuthorizationServer{}
-// 	auth.RegisterAuthorizationServer(grpcServer, implAuthServer)
-
-// 	if err := grpcServer.Serve(lis); err != nil {
-// 		log.Fatalf("Failed to start server: %v", err)
-// 	}
-// }
