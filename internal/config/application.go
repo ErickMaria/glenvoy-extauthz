@@ -104,7 +104,7 @@ func findConfigFile(profile *Profile, ctx context.Context) string {
 	}
 
 	if !findApplicationConfig {
-		logging.Logger(ctx).Fatalf("not found applcation configs: %s", configfileList)
+		logging.Logger(ctx).Fatalf("not found application configs: %s", configfileList)
 	}
 
 	getExternsion := path.Ext(filename)

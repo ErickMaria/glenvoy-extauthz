@@ -1,8 +1,10 @@
 package config
 
 import (
+	"os"
 	"bytes"
 	"context"
+	"strings"
 	"io/ioutil"
 
 	yaml "gopkg.in/yaml.v2"
@@ -22,7 +24,13 @@ var ProfileConfig *Profile
 
 func Load(profileFlag string, ctx context.Context) (error, string) {
 
-	data, err := ioutil.ReadFile("configs/profile.yaml")
+	var ProfilePath string
+	if ProfilePath = os.Getenv(strings.ToUpper("APP_PROFILE_PATH")); ProfilePath == "" {
+		ProfilePath = "configs"
+	}
+
+
+	data, err := ioutil.ReadFile(ProfilePath+"/"+"profile.yaml")
 	if err != nil {
 		logging.Logger(ctx).Fatalf("cannot found profile file %s", err)
 	}	
@@ -35,22 +43,25 @@ func Load(profileFlag string, ctx context.Context) (error, string) {
 	}
 
 	if profileFlag == "" {
-		for opt := range(opts){
-			profileOpt := opts[opt]
-			if profileOpt.Default == true {
-				profileFlag = opt
-				break
+		if profileFlag = os.Getenv("APP_PROFILE_ACTIVE"); profileFlag == "" {
+			for opt := range(opts){
+				profileOpt := opts[opt]
+				if profileOpt.Default == true {
+					profileFlag = opt
+					break
+				}
 			}
 		}
 	}
 
 	pconfig := opts[profileFlag]
-
 	if pconfig.File == "" {
-		logging.Logger(ctx).Fatalf("profile type not exists")
+		logging.Logger(ctx).Fatalf("profile type '%s' not exists", profileFlag)
 	}
 
 	ProfileConfig = &pconfig
 
 	return nil, profileFlag
 }
+
+// the Load in profile.go function will look for the environment variables APP_PROFILE_PATH and APP_PROFILE_ACTIVE if the flags are not specific in the main funtion call
