@@ -1,4 +1,4 @@
-glenvoy: &glenvoy
+glenvoy:
   app:
     name: "Glenvoy" 
     environment: local
@@ -8,7 +8,7 @@ glenvoy: &glenvoy
     port: 8080
   datasource:
     dialect: "postgres"
-    host: "localhost"
+    host: "10.0.218.47"
     port: "5432"
     database: "GENVOYAUTHZ"
     username: "admin"
@@ -24,22 +24,3 @@ glenvoy: &glenvoy
     headers:
       - x-authz-access-token
       - x-authz-client-id
-
-
-development:
-  <<: *glenvoy
-  app:
-    environment: "development"
-  database:
-    name: ""
-    username: ""
-    password: ""
-
-test:
-  <<: *glenvoy
-  app:
-    environment: "test"
-  database:
-    name: ""
-    username: ""
-    password: ""

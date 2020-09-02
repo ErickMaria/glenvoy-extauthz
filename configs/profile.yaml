@@ -1,0 +1,25 @@
+
+
+# application will take a .yaml file and look for the suffixes in the list and match the first one it finds
+
+profile: &profile
+  path: configs/
+  file: application#{suffix}#.yaml
+
+production:
+  <<: *profile
+  suffix: 
+    - production
+    - prod 
+
+development:
+  <<: *profile
+  default: true
+  suffix:
+    - development
+    - dev
+    - ""
+test:
+  <<: *profile
+  suffix:
+    - test
