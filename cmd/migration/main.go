@@ -17,12 +17,13 @@ var (
 func init() {
 
 	// Parsing Command-Line Flag
-	flag.StringVar(&profile, "profile", "development", "applation profile acceped: development, production, test")
+	flag.StringVar(&profile, "profile", "", "get profile allows in configs/profile.yaml")
 	flag.StringVar(&migration, "migration", "create", "migration mode: acceped: create, delete")
 	flag.Parse()
 
 	// Initializing applacation Profile
-	config.Init("../../configs", "application.yaml", profile)
+	config.Init(profile, ctx)
+	logging.Init(config.AppConfig.App.Name)
 	logging.Logger(ctx).Infof("Application profile: %s", config.AppConfig.Profile)
 }
 

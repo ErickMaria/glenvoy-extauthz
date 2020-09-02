@@ -13,6 +13,6 @@ RUN go build -o gauthz-server -ldflags '-libgcc=none -s -w' cmd/server/main.go
 
 FROM alpine:3.12.0
 RUN mkdir -p /opt/gauthz /opt/gauthz/configs
-COPY --from=builder /opt/gauthz/configs/application.yaml /opt/gauthz/configs
+COPY --from=builder /opt/gauthz/configs/*.yaml /opt/gauthz/configs
 COPY --from=builder /opt/gauthz/gauthz-server /bin
 ENTRYPOINT ["./bin/gauthz-server"]

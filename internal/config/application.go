@@ -4,13 +4,9 @@ import (
 	"context"
 	"strings"
 	"os"
-
+	"path"
 	"github.com/spf13/viper"
 	"github/erickmaria/glooe-envoy-extauthz/internal/pkg/logging"
-)
-
-const (
-	ymlPrefixKey = "glenvoy"
 )
 
 // Applcation for configuration files
@@ -58,6 +54,8 @@ func Init(profileFlag string, ctx context.Context) error {
 	applicationFile := findConfigFile(ProfileConfig, ctx)
 
 
+	// configuring Viper
+
 	viperSetup := viper.GetViper()
 	viper.AddConfigPath(ProfileConfig.Path)
 	viperSetup.SetConfigName(applicationFile)
@@ -72,8 +70,8 @@ func Init(profileFlag string, ctx context.Context) error {
 
 	var opt Application
 	
-	if err := viperSetup.UnmarshalKey(ymlPrefixKey, &opt); err != nil {
-		logging.Logger(ctx).Fatalf("[AppCofing] Error reading configuration files, %s", err)
+	if err := viperSetup.UnmarshalKey(ProfileConfig.Parent, &opt); err != nil {
+		logging.Logger(ctx).Fatalf("[AppCofing] Error reading configuration file, %s", err)
 	}
 
 	opt.Profile = currentProfile 
@@ -84,7 +82,7 @@ func Init(profileFlag string, ctx context.Context) error {
 
 func findConfigFile(profile *Profile, ctx context.Context) string {
 	pattern := "#{suffix}#"
-	var configfile string
+	var configfile, filename string
 	var configfileList []string 
 	var findApplicationConfig bool = false 
 
@@ -94,7 +92,7 @@ func findConfigFile(profile *Profile, ctx context.Context) string {
 			suffix = "-"+suffix
 		}
 
-		filename := strings.Replace(profile.File, pattern, suffix, strings.Count(pattern, "")-1)
+		filename = strings.Replace(profile.File, pattern, suffix, strings.Count(pattern, "")-1)
 		configfile = profile.Path + filename
 		configfileList = append(configfileList, configfile)
 		if _, err := os.Stat(configfile); os.IsNotExist(err) {
@@ -109,5 +107,8 @@ func findConfigFile(profile *Profile, ctx context.Context) string {
 		logging.Logger(ctx).Fatalf("not found applcation configs: %s", configfileList)
 	}
 
-	return configfile
+	getExternsion := path.Ext(filename)
+	name := filename[0:len(filename)-len(getExternsion)]
+
+	return name
 }

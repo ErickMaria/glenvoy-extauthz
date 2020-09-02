@@ -14,6 +14,7 @@ type Profile struct {
 	Path 	string 	 `yaml:"path"`
 	File 	string   `yaml:"file"`
 	Suffixs []string `yaml:"suffix"`
+	Parent string	 `yaml:"parent"`	
 	Default bool 	 `yaml:"default"`
 }
 
