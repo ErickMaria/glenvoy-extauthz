@@ -19,14 +19,14 @@ type Connection struct {
 
 func NewConnection() Connection {
 	return Connection{
-		Dialect: config.AppConfig.Datasource.Dialect,
+		Dialect: config.AppConfig.Glenvoy.Datasource.Dialect,
 		SSLMode: "disable",
 		Datasource: Datasource{
-			Host:     config.AppConfig.Datasource.Host,
-			Port:     config.AppConfig.Datasource.Port,
-			Database: config.AppConfig.Datasource.Database,
-			Username: config.AppConfig.Datasource.Username,
-			Password: config.AppConfig.Datasource.Password,
+			Host:     config.AppConfig.Glenvoy.Datasource.Host,
+			Port:     config.AppConfig.Glenvoy.Datasource.Port,
+			Database: config.AppConfig.Glenvoy.Datasource.Database,
+			Username: config.AppConfig.Glenvoy.Datasource.Username,
+			Password: config.AppConfig.Glenvoy.Datasource.Password,
 		},
 	}
 

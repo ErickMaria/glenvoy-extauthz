@@ -3,7 +3,6 @@
 # application will take a .yaml file and look for the suffixes in the list and match the first one it finds
 
 profile: &profile
-  parent: glenvoy
   path: configs/
   file: application#{suffix}#.yaml
 

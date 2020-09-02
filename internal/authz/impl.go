@@ -31,8 +31,8 @@ func (a *ImplAuthorizationServer) Check(ctx context.Context, req *auth.CheckRequ
 
 	// capturing headers
 	host := req.Attributes.Request.Http.GetHost()
-	access := req.Attributes.Request.Http.Headers[config.AppConfig.AppKeys.Headers[0]]
-	client := req.Attributes.Request.Http.Headers[config.AppConfig.AppKeys.Headers[1]]
+	access := req.Attributes.Request.Http.Headers[config.AppConfig.Glenvoy.AppKeys.Headers[0]]
+	client := req.Attributes.Request.Http.Headers[config.AppConfig.Glenvoy.AppKeys.Headers[1]]
 
 	if autorizationLogic(ctx, a.DB, host, access, client) {
 		return authorized()

@@ -1,44 +1,47 @@
 package config
 
 import (
-	"context"
-	"strings"
 	"os"
 	"path"
+	"context"
+	"strings"
+	
 	"github.com/spf13/viper"
 	"github/erickmaria/glooe-envoy-extauthz/internal/pkg/logging"
 )
 
 // Applcation for configuration files
 type Application struct {
-	App struct {
-		Name        string `yaml:"name"`
-		Environment string `yaml:"environment"`
-		Version     string `yaml:"version"`
-	} `yaml:"app"`
-	HTTP struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
-	} `yaml:"http"`
-	Datasource struct {
-		Dialect  string `yaml:"dialect"`
-		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
-		Username string `yaml:"username"`
-		Password string `yaml:"password"`
-		Database string `yaml:"database"`
-	} `yaml:"datasource"`
-	// Redis struct {
-	// 	Host        string `yaml:"host"`
-	// 	Port        string `yaml:"port"`
-	// 	Username    string `yaml:"username"`
-	// 	Password    string `yaml:"password"`
-	// 	DB          string `yaml:"db"`
-	// 	DialTimeout string `yaml:"dialtimeout"`
-	// } `yaml:"redis"`
-	AppKeys struct {
-		Headers [2]string `yaml:"headers"`
-	} `yaml:"appkeys"`
+	Glenvoy struct  {
+		App struct {
+			Name        string `yaml:"name"`
+			Environment string `yaml:"environment"`
+			Version     string `yaml:"version"`
+		} `yaml:"app"`
+		HTTP struct {
+			Host string `yaml:"host"`
+			Port string `yaml:"port"`
+		} `yaml:"http"`
+		Datasource struct {
+			Dialect  string `yaml:"dialect"`
+			Host     string `yaml:"host"`
+			Port     string `yaml:"port"`
+			Username string `yaml:"username"`
+			Password string `yaml:"password"`
+			Database string `yaml:"database"`
+		} `yaml:"datasource"`
+		// Redis struct {
+		// 	Host        string `yaml:"host"`
+		// 	Port        string `yaml:"port"`
+		// 	Username    string `yaml:"username"`
+		// 	Password    string `yaml:"password"`
+		// 	DB          string `yaml:"db"`
+		// 	DialTimeout string `yaml:"dialtimeout"`
+		// } `yaml:"redis"`
+		AppKeys struct {
+			Headers [2]string `yaml:"headers"`
+		} `yaml:"appkeys"`
+	} `yaml:"glenvoy"`
 
 	Profile string
 }
@@ -70,7 +73,7 @@ func Init(profileFlag string, ctx context.Context) error {
 
 	var opt Application
 	
-	if err := viperSetup.UnmarshalKey(ProfileConfig.Parent, &opt); err != nil {
+	if err := viperSetup.Unmarshal(&opt); err != nil {
 		logging.Logger(ctx).Fatalf("[AppCofing] Error reading configuration file, %s", err)
 	}
 
