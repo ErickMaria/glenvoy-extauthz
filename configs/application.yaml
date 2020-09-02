@@ -8,18 +8,18 @@ glenvoy:
     port: 8080
   datasource:
     dialect: "postgres"
-    host: "10.0.218.47"
+    host: "localhost"
     port: "5432"
     database: "GENVOYAUTHZ"
     username: "admin"
     password: "admin"
-  redis:
-    host: 0.0.0.0
-    port: "6379"
-    username: ""
-    password: ""
-    db: 0
-    dialtimeout: 5
+  # redis:
+  #   host: 0.0.0.0
+  #   port: "6379"
+  #   username: ""
+  #   password: ""
+  #   db: 0
+  #   dialtimeout: 5
   appkeys:
     headers: # the values ​​must be in order [your-access-token-header, your-client-id-header] to work correctly
       - x-authz-access-token

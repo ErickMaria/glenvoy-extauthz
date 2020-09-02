@@ -28,14 +28,14 @@ type Application struct {
 		Password string `yaml:"password"`
 		Database string `yaml:"database"`
 	} `yaml:"datasource"`
-	Redis struct {
-		Host        string `yaml:"host"`
-		Port        string `yaml:"port"`
-		Username    string `yaml:"username"`
-		Password    string `yaml:"password"`
-		DB          string `yaml:"db"`
-		DialTimeout string `yaml:"dialtimeout"`
-	} `yaml:"redis"`
+	// Redis struct {
+	// 	Host        string `yaml:"host"`
+	// 	Port        string `yaml:"port"`
+	// 	Username    string `yaml:"username"`
+	// 	Password    string `yaml:"password"`
+	// 	DB          string `yaml:"db"`
+	// 	DialTimeout string `yaml:"dialtimeout"`
+	// } `yaml:"redis"`
 	AppKeys struct {
 		Headers [2]string `yaml:"headers"`
 	} `yaml:"appkeys"`
