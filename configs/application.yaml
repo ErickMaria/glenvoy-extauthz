@@ -21,6 +21,6 @@ glenvoy:
     db: 0
     dialtimeout: 5
   appkeys:
-    headers:
+    headers: # the values ​​must be in order [your-access-token-header, your-client-id-header] to work correctly
       - x-authz-access-token
       - x-authz-client-id
