@@ -23,7 +23,7 @@ func init() {
 
 	// Initializing applacation Profile
 	config.Init(profile, ctx)
-	logging.Init(config.AppConfig.App.Name)
+	logging.Init(config.AppConfig.Glenvoy.App.Name)
 	logging.Logger(ctx).Infof("Application profile: %s", config.AppConfig.Profile)
 }
 
