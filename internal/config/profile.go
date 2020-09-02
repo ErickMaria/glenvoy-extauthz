@@ -63,5 +63,3 @@ func Load(profileFlag string, ctx context.Context) (error, string) {
 
 	return nil, profileFlag
 }
-
-// the Load in profile.go function will look for the environment variables APP_PROFILE_PATH and APP_PROFILE_ACTIVE if the flags are not specific in the main funtion call
