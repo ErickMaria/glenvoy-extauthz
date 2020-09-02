@@ -5,14 +5,23 @@ ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
 
-WORKDIR /opt/gauthz
+WORKDIR /gauthz
 COPY . .
 
 RUN go mod download
-RUN go build -o gauthz-server -ldflags '-libgcc=none -s -w' cmd/server/main.go 
+
+RUN echo "building auth server"
+RUN go build -o gauthz-server -ldflags '-libgcc=none -s -w' cmd/server/main.go
+
+RUN echo "building auth migration"
+RUN go build -o gauthz-migrate -ldflags '-libgcc=none -s -w' cmd/migration/main.go
 
 FROM alpine:3.12.0
-RUN mkdir -p /opt/gauthz /opt/gauthz/configs
-COPY --from=builder /opt/gauthz/configs/*.yaml /opt/gauthz/configs
-COPY --from=builder /opt/gauthz/gauthz-server /bin
-ENTRYPOINT ["./bin/gauthz-server"]
+
+RUN mkdir -p /configs/
+
+COPY --from=builder /gauthz/configs/*.yaml /configs/
+COPY --from=builder /gauthz/gauthz-server /bin/
+COPY --from=builder /gauthz/gauthz-migrate /bin/
+
+# ENTRYPOINT ["./bin/gauthz-server"]

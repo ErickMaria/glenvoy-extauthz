@@ -27,7 +27,7 @@ func init() {
 
 	// Initializing applacation Profile
 	config.Init(profile, ctx)
-	logging.Init(config.AppConfig.App.Name)
+	logging.Init(config.AppConfig.Glenvoy.App.Name)
 
 	logging.Logger(ctx).Infof("loading Application profile: %s", config.AppConfig.Profile)
 
@@ -40,7 +40,7 @@ func main() {
 	defer db.Close()
 
 	// create a TCP server
-	addr := config.AppConfig.HTTP.Host + ":" + config.AppConfig.HTTP.Port
+	addr := config.AppConfig.Glenvoy.HTTP.Host + ":" + config.AppConfig.Glenvoy.HTTP.Port
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		logging.Logger(ctx).Fatalf("failed to listen: %v", err)
