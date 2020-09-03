@@ -1,0 +1,165 @@
+############# NAMESPAPACE ##############
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gauthz-server
+
+############# CONFIGMAP ##############
+
+# POSTGRESS
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    namespace: gauthz-server
+    name: postgres
+data:
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: admin
+  POSTGRES_DB: GENVOYAUTHZ
+  PGDATA: /data/postgres
+
+# GAUTHZ-SERVER
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: gauthz-server
+  name: gauthz
+data:
+  GLENVOY_DATASOURCE_DATABASE: GENVOYAUTHZ
+  GLENVOY_DATASOURCE_HOST: postgres
+  GLENVOY_DATASOURCE_PORT: "5432"
+  GLENVOY_DATASOURCE_USERNAME: admin
+  GLENVOY_DATASOURCE_PASSWORD: admin
+
+############# SERVICE ##############
+
+# POSTGRES
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: gauthz-server
+  name: postgres
+  labels:
+    app: postgres
+spec:
+    ports:
+    - name: tcp
+      port: 5432
+      protocol: TCP
+      targetPort: tcp
+    selector:
+      app: postgres
+    type: ClusterIP
+
+# GAUTHZ-SERVER
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: gauthz-server
+  name: gauthz-server
+  labels:
+    app: gauthz-server
+spec:
+  ports:
+  - name: tcp-server
+    port: 80
+    protocol: TCP
+    targetPort: tcp-server
+  selector:
+    app: gauthz-server
+  type: ClusterIP
+
+############# DEPLOYMENT ##############
+
+# POSTGRES
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: gauthz-server
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgres    
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: postgres
+        ports:
+        - name: tcp
+          containerPort: 5432
+
+# GAUTHZ-SERVER
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: gauthz-server
+  name: gauthz-server
+spec:
+  selector:
+    matchLabels:
+      app: gauthz-server     
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gauthz-server      
+    spec:
+      initContainers:
+      - name: gauthz-migrate
+        image: emrds/glooe-envoy-extauthz:0.0.1
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', './bin/gauthz-migrate']
+        envFrom:
+        - configMapRef:
+            name: gauthz
+      containers:
+      - name: gauthz-server
+        image: emrds/glooe-envoy-extauthz:0.0.1
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', './bin/gauthz-server']
+        envFrom:
+        - configMapRef:
+            name: gauthz
+        ports:
+        - name: tcp-server
+          containerPort: 50051
+
+############## UPSTREAM ##############
+
+---
+apiVersion: gloo.solo.io/v1
+kind: Upstream
+metadata:
+  name: gauthz-server
+  namespace: gauthz-server
+spec:
+  static:
+    hosts:
+    - addr: gauthz-server.gauthz-server.svc.cluster.local
+      port: 80
+
+######################################

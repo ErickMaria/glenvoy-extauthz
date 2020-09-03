@@ -12,6 +12,7 @@ import (
 
 	auth "github.com/envoyproxy/go-control-plane/envoy/service/auth/v2"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 var (
@@ -52,6 +53,8 @@ func main() {
 		DB: db,
 	}
 	auth.RegisterAuthorizationServer(grpcServer, implAuthServer)
+	
+	reflection.Register(grpcServer)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		logging.Logger(ctx).Fatalf("failed to start server: %v", err)
